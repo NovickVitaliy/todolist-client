@@ -21,7 +21,10 @@ type TodoTask = {
 
 function App() {
     const [isUpdateTodoTaskModalOpen, setIsUpdateTodoTaskModalOpen] = useState(false);
+    const [isDeleteTodoTaskModalOpen, setIsDeleteTodoTaskModalOpen] = useState(false);
     const [todoTaskToUpdate, setTodoTaskToUpdate] = useState<TodoTask | null>(null);
+    const [todoTaskIdToDelete, setTodoTaskIdToDelete] = useState<number | null>(null);
+    const [todoTaskToDelete, setTodoTaskToDelete] = useState<TodoTask | null>(null);
     const [todos, setTodos] = useState<TodoTask[]>([]);
     const today = new Date().toISOString().split('T')[0];
 
@@ -57,8 +60,13 @@ function App() {
         }
     };
 
-    const onDeleteTodoTask = () => {
-
+    const onDeleteTodoTask = (taskId: number) => {
+        const taskToDelete = todos.filter(x => x.id === taskId)[0];
+        if(taskToDelete){
+            setTodoTaskIdToDelete(taskId);
+            setTodoTaskToDelete(taskToDelete);
+            setIsDeleteTodoTaskModalOpen(true);
+        }
     };
 
     const onEditTodoTask = (taskId: number) => {
@@ -78,11 +86,29 @@ function App() {
 
     const handleUpdateTodoTaskOk = () => {
         updateTodoTaskForm.submit();
+        setTodoTaskToUpdate(null);
         setIsUpdateTodoTaskModalOpen(false);
     }
 
-    const handleTodoTaskCancel = () => {
+    const handleDeleteTodoTaskOk = () => {
+        if(todoTaskIdToDelete){
+            const filteredTodos = todos.filter(x => x.id !== todoTaskIdToDelete);
+            setTodos(filteredTodos);
+            setTodoTaskToDelete(null);
+            setTodoTaskIdToDelete(null);
+        }
+        setIsDeleteTodoTaskModalOpen(false);
+    }
+
+    const handleUpdateTodoTaskDelete = () => {
+        setTodoTaskToUpdate(null);
         setIsUpdateTodoTaskModalOpen(false);
+    }
+
+    const handleDeleteTodoTaskCancel = () => {
+        setTodoTaskIdToDelete(null);
+        setTodoTaskToDelete(null);
+        setIsDeleteTodoTaskModalOpen(false);
     }
 
     return (
@@ -141,7 +167,7 @@ function App() {
                                     <Button onClick={() => onEditTodoTask(t.id)}>
                                         <EditOutlined/>
                                     </Button>
-                                    <Button danger onClick={onDeleteTodoTask}>
+                                    <Button danger onClick={() => onDeleteTodoTask(t.id)}>
                                         <DeleteOutlined color={'danger'}/>
                                     </Button>
                                 </div>
@@ -155,7 +181,7 @@ function App() {
                 closable={{'aria-label': 'Custom Close Button'}}
                 open={isUpdateTodoTaskModalOpen}
                 onOk={handleUpdateTodoTaskOk}
-                onCancel={handleTodoTaskCancel}
+                onCancel={handleUpdateTodoTaskDelete}
             >
                 {todoTaskToUpdate && (<>
 
@@ -209,6 +235,18 @@ function App() {
                                 </Form.Item>
                             </div>
                         </Form>
+                    </>
+                )}
+            </Modal>
+            <Modal
+                title="Delete Todo Task"
+                closable={{'aria-label': 'Custom Close Button'}}
+                open={isDeleteTodoTaskModalOpen}
+                onOk={handleDeleteTodoTaskOk}
+                onCancel={handleDeleteTodoTaskCancel}
+            >
+                {todoTaskToDelete && (<>
+                        <p>Are you sure you want to delete the task '{todoTaskToDelete.name}'</p>
                     </>
                 )}
             </Modal>
