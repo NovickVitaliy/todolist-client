@@ -26,7 +26,7 @@ function App() {
     const [todoTaskIdToDelete, setTodoTaskIdToDelete] = useState<number | null>(null);
     const [todoTaskToDelete, setTodoTaskToDelete] = useState<TodoTask | null>(null);
     const [todos, setTodos] = useState<TodoTask[]>([]);
-    const today = new Date().toISOString().split('T')[0];
+    const today = dayjs(new Date()).format('YYYY-MM-DD');
 
     const [createTodoTaskForm] = Form.useForm<TodoTask>();
     const [updateTodoTaskForm] = Form.useForm<TodoTask>();
