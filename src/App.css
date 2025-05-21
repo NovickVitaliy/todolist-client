@@ -16,6 +16,11 @@
   gap: 20px;
 }
 
+.create-task-btn {
+  margin-left: 10px;
+  margin-bottom: 5px;
+}
+
 .todo-wrapper {
   width: 40%;
 }
@@ -71,10 +76,19 @@
   padding: 10px;
   margin-bottom: 10px;
   display: flex;
+  gap: 10px;
   justify-content: space-between;
 }
 
 .todo-list__options {
+  justify-content: space-between;
   display: flex;
+  flex-direction: column;
   gap: 5px;
+}
+
+.todo_list__item-header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 }

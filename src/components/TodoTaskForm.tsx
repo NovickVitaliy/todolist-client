@@ -69,7 +69,7 @@ function TodoTaskForm() {
                 </Form.Item>
             </div>
 
-            <Button type={'primary'} htmlType={'submit'}>Create task</Button>
+            <Button className='create-task-btn' type={'primary'} htmlType={'submit'}>Create task</Button>
         </Form>
     </div>);
 }

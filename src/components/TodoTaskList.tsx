@@ -1,6 +1,6 @@
 import {TodoTaskStatus} from "../models/todo-task-status.ts";
+import type {PaginationProps} from 'antd';
 import {Button, DatePicker, Form, Input, Modal, Pagination, Select} from "antd";
-import type { PaginationProps } from 'antd';
 import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
 import React, {useEffect, useState} from "react";
 import type {TodoTask} from "../models/todo-task.ts";
@@ -100,14 +100,30 @@ function TodoTaskList() {
         setIsDeleteTodoTaskModalOpen(false);
     }
 
+    const getBgColor = (status) => {
+        switch (status){
+            case "Todo":
+                return "#f5222d";
+            case "InProgress":
+                return "#faad14";
+            case "Done":
+                return "#52c41a"
+        }
+    };
+
     return (<>
         <div className={'todo-list'}>
             <div className={'todo-list__items'}>
-                <h4 style={{margin: '0px'}}>Your tasks:</h4>
+                <h4 style={{margin: '0px', marginBottom: '10px'}}>Your tasks:</h4>
                 {loading ? (<p>Tasks are being loaded...</p>) : todos.map(t => (
                     <div key={t.id} className={'todo-list__item'}>
-                        <div>
-                            {t.name} | Due To: {t.dueDate} | Status: {t.status}
+                        <div style={{width: "100%"}}>
+                            <div>
+                                <p style={{width: "fit-content", marginBottom: "5px", marginTop: "5px", padding: "5px", borderRadius: "5px", fontSize: "15px", color: "white", backgroundColor: getBgColor(t.status)}}>{t.status}</p>
+                                <b>{t.name}</b>
+                            </div>
+                            <b>Due To: {t.dueDate}</b>
+                            {t.description && <p style={{margin: "0", color: "rgba(145, 142, 142, 0.8)"}}>Description: {t.description}</p>}
                         </div>
                         <div className={'todo-list__options'}>
                             <Button onClick={() => onEditTodoTask(t.id)}>
