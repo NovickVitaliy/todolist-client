@@ -79,10 +79,10 @@ function TodoTaskList() {
         setIsUpdateTodoTaskModalOpen(false);
     }
 
-    const handleDeleteTodoTaskOk = () => {
+    const handleDeleteTodoTaskOk = async () => {
         if (todoTaskIdToDelete) {
-            dispatch(deleteTodo(todoTaskIdToDelete))
-            dispatch(getTodos({pageNumber: currentPage, pageSize: pageSize}))
+            await dispatch(deleteTodo(todoTaskIdToDelete))
+            await dispatch(getTodos({pageNumber: currentPage, pageSize: pageSize}))
             setTodoTaskToDelete(null);
             setTodoTaskIdToDelete(null);
         }

@@ -29,7 +29,7 @@ export const addTodo = createAsyncThunk<TodoTask, TodoTask, { rejectValue: strin
     async (todoTask, {rejectWithValue}) => {
         try {
             console.log("sending post request")
-            const response = await axios.post("http://localhost:1000/api/todos/", todoTask);
+            const response = await axios.post("http://localhost:8090/api/todos/", todoTask);
             return {...response.data};
         } catch (error) {
             return rejectWithValue("Error while creating todotask");
@@ -43,7 +43,7 @@ export const updateTodo = createAsyncThunk<TodoTask, TodoTask, { rejectValue: st
         try {
             console.log('FROM UPDATE')
             console.log(todoTask);
-            const response = await axios.put(`http://localhost:1000/api/todos/${todoTask.id}`, todoTask);
+            const response = await axios.put(`http://localhost:8090/api/todos/${todoTask.id}`, todoTask);
             return {...response.data};
         } catch (error) {
             return rejectWithValue("Error while updating todo task");
@@ -55,7 +55,7 @@ export const deleteTodo = createAsyncThunk<number, void, { rejectValue: string }
     'todos/delete',
     async (todoTaskId: number, {rejectWithValue}) => {
         try {
-            await axios.delete(`http://localhost:1000/api/todos/${todoTaskId}`);
+            await axios.delete(`http://localhost:8090/api/todos/${todoTaskId}`);
             return todoTaskId;
         } catch (err) {
             return rejectWithValue("Error while deleting the todo task");
@@ -67,7 +67,7 @@ export const getTodos = createAsyncThunk<{ pageNumber: number, pageSize: number 
     'todos/get',
     async (pageRequest: { pageNumber: number, pageSize: number }, {rejectWithValue}) => {
         try {
-            const response = await axios.get(`http://localhost:1000/api/todos?pageNumber=${pageRequest.pageNumber}&pageSize=${pageRequest.pageSize}`);
+            const response = await axios.get(`http://localhost:8090/api/todos?pageNumber=${pageRequest.pageNumber}&pageSize=${pageRequest.pageSize}`);
             return {...response.data};
         } catch (err) {
             return rejectWithValue("Error while deleting the todo task");
@@ -103,6 +103,7 @@ const todoSlice = createSlice({
 
         }).addCase(deleteTodo.fulfilled, (state: TodoState, action) => {
             state.todos = state.todos.filter(t => t.id !== action.payload);
+            state.totalItemsCount -= 1;
         }).addCase(getTodos.pending, (state: TodoState) => {
             state.loading = true;
         }).addCase(getTodos.fulfilled, (state: TodoState, action) => {
