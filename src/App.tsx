@@ -15,7 +15,7 @@ const {TextArea} = Input;
 function App() {
     return (
         <>
-            <h1>(not) Amazing Todo List</h1>
+            <h1 className='header'>(not) Amazing Todo List</h1>
             <div className='main'>
                 <TodoTaskForm></TodoTaskForm>
                 <TodoTaskList></TodoTaskList>

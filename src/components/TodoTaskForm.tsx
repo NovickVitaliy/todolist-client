@@ -33,7 +33,7 @@ function TodoTaskForm() {
     };
 
 
-    return (<div>
+    return (<div className='todo-wrapper'>
         <Form
             form={createTodoTaskForm}
             className='todo-form'
