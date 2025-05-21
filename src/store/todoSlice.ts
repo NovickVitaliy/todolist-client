@@ -88,6 +88,7 @@ const todoSlice = createSlice({
                 state.todos.push(action.payload);
             }
             state.totalItemsCount += 1;
+            state.todos = state.todos.sort((a, b) => a.id - b.id);
         }).addCase(addTodo.rejected, (state: TodoState, action) => {
             state.loading = false;
             state.error = action.payload ?? "Unknown error"
@@ -97,6 +98,7 @@ const todoSlice = createSlice({
             const filteredTodos = state.todos.filter(t => t.id !== action.payload.id);
             filteredTodos.push(action.payload);
             state.todos = filteredTodos;
+            state.todos = state.todos.sort((a, b) => a.id - b.id);
         }).addCase(updateTodo.rejected, (state: TodoState, action) => {
             state.error = action.payload ?? "Unknown error"
         }).addCase(deleteTodo.pending, (state) => {
@@ -104,6 +106,7 @@ const todoSlice = createSlice({
         }).addCase(deleteTodo.fulfilled, (state: TodoState, action) => {
             state.todos = state.todos.filter(t => t.id !== action.payload);
             state.totalItemsCount -= 1;
+            state.todos = state.todos.sort((a, b) => a.id - b.id);
         }).addCase(getTodos.pending, (state: TodoState) => {
             state.loading = true;
         }).addCase(getTodos.fulfilled, (state: TodoState, action) => {
