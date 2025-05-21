@@ -28,7 +28,6 @@ export const addTodo = createAsyncThunk<TodoTask, TodoTask, { rejectValue: strin
     'todos/add',
     async (todoTask, {rejectWithValue}) => {
         try {
-            console.log("sending post request")
             const response = await axios.post("http://localhost:8090/api/todos/", todoTask);
             return {...response.data};
         } catch (error) {
@@ -41,8 +40,6 @@ export const updateTodo = createAsyncThunk<TodoTask, TodoTask, { rejectValue: st
     'todos/update',
     async (todoTask: TodoTask, {rejectWithValue}) => {
         try {
-            console.log('FROM UPDATE')
-            console.log(todoTask);
             const response = await axios.put(`http://localhost:8090/api/todos/${todoTask.id}`, todoTask);
             return {...response.data};
         } catch (error) {

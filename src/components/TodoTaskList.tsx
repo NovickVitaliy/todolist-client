@@ -33,7 +33,6 @@ function TodoTaskList() {
     };
 
     const onFinishUpdateTodoTask: FormProps<TodoTask>['onFinish'] = (values) => {
-        console.log(values)
         if (todoTaskToUpdate !== null) {
             const newTodoTask: TodoTask = {
                 id: todoTaskToUpdate.id,
