@@ -1,30 +1,43 @@
 import {TodoTaskStatus} from "../models/todo-task-status.ts";
 import {Button, DatePicker, Form, Input, Modal, Select} from "antd";
 import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import type {TodoTask} from "../models/todo-task.ts";
 import dayjs from "dayjs";
 import {FormProps} from "antd/lib";
+import {useDispatch, useSelector} from "react-redux";
+import type {AppDispatch, RootState} from "../store/store.ts";
+import {deleteTodo, getTodos, updateTodo} from "../store/todoSlice.ts";
+import TextArea from "antd/es/input/TextArea";
 
 function TodoTaskList() {
+    const pageSize = 10;
+    const [currentPage, setCurrentPage] = useState(1);
+    const dispatch = useDispatch<AppDispatch>();
+    const { todos, loading, error } = useSelector((state: RootState) => state.todos);
     const [isUpdateTodoTaskModalOpen, setIsUpdateTodoTaskModalOpen] = useState(false);
     const [isDeleteTodoTaskModalOpen, setIsDeleteTodoTaskModalOpen] = useState(false);
     const [todoTaskToUpdate, setTodoTaskToUpdate] = useState<TodoTask | null>(null);
     const [todoTaskIdToDelete, setTodoTaskIdToDelete] = useState<number | null>(null);
     const [todoTaskToDelete, setTodoTaskToDelete] = useState<TodoTask | null>(null);
-    const [todos, setTodos] = useState<TodoTask[]>([]);
     const [updateTodoTaskForm] = Form.useForm<TodoTask>();
     const today = dayjs(new Date()).format('YYYY-MM-DD');
 
+    useEffect(() => {
+        dispatch(getTodos({pageNumber: currentPage, pageSize: pageSize}));
+    }, [dispatch, currentPage]);
+
     const onFinishUpdateTodoTask: FormProps<TodoTask>['onFinish'] = (values) => {
+        console.log(values)
         if (todoTaskToUpdate !== null) {
-            const date = dayjs(values.dueDate).format('YYYY-MM-DD');
-            todoTaskToUpdate.name = values.name;
-            todoTaskToUpdate.dueDate = date;
-            todoTaskToUpdate.description = values.description;
-            todoTaskToUpdate.status = values.status;
-            const filteredTodos = todos.filter(x => x.id !== todoTaskToUpdate?.id);
-            setTodos([...filteredTodos, todoTaskToUpdate]);
+            const newTodoTask: TodoTask = {
+                id: todoTaskToUpdate.id,
+                status: values.status,
+                name: values.name,
+                description: values.description,
+                dueDate: dayjs(values.dueDate).format('YYYY-MM-DD')
+            };
+            dispatch(updateTodo(newTodoTask))
             updateTodoTaskForm.resetFields();
             setIsUpdateTodoTaskModalOpen(false);
             setTodoTaskToUpdate(null);
@@ -63,8 +76,7 @@ function TodoTaskList() {
 
     const handleDeleteTodoTaskOk = () => {
         if (todoTaskIdToDelete) {
-            const filteredTodos = todos.filter(x => x.id !== todoTaskIdToDelete);
-            setTodos(filteredTodos);
+            dispatch(deleteTodo(todoTaskIdToDelete))
             setTodoTaskToDelete(null);
             setTodoTaskIdToDelete(null);
         }
@@ -86,10 +98,10 @@ function TodoTaskList() {
         <div className={'todo-list'}>
             <div className={'todo-list__items'}>
                 <h4 style={{margin: '0px'}}>Your tasks:</h4>
-                {todos.map(t => (
+                {loading ? (<p>Tasks are being loaded...</p>) : todos.map(t => (
                     <div key={t.id} className={'todo-list__item'}>
                         <div>
-                            {t.name} | Due To: {t.dueDate} | Status: {TodoTaskStatus[t.status]}
+                            {t.name} | Due To: {t.dueDate} | Status: {t.status}
                         </div>
                         <div className={'todo-list__options'}>
                             <Button onClick={() => onEditTodoTask(t.id)}>

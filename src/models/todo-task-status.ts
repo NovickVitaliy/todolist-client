@@ -1,5 +1,5 @@
 export enum TodoTaskStatus {
     ToDo = "ToDo",
-    InProgress = "In Progress",
+    InProgress = "InProgress",
     Done = "Done"
 }

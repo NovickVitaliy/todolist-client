@@ -13,8 +13,8 @@ let idRunner = 1;
 
 function TodoTaskForm() {
     const dispatch = useDispatch<AppDispatch>();
-    const { stateTodos, loading, error } = useSelector((state: RootState) => state.todos);
-    const [todos, setTodos] = useState<TodoTask[]>([]);
+    const { todos, loading, error } = useSelector((state: RootState) => state.todos);
+    // const [todos, setTodos] = useState<TodoTask[]>([]);
     const [createTodoTaskForm] = Form.useForm<TodoTask>();
     const today = dayjs(new Date()).format('YYYY-MM-DD');
 
@@ -28,7 +28,7 @@ function TodoTaskForm() {
         };
         idRunner += 1;
         dispatch(addTodo(todoTask));
-        setTodos(prevTodos => [...prevTodos, todoTask]);
+        // setTodos(prevTodos => [...prevTodos, todoTask]);
         createTodoTaskForm.resetFields();
     };
 
