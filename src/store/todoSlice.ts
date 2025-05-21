@@ -9,6 +9,7 @@ interface TodoState {
     currentPage: number;
     pageSize: number;
     totalPages: number;
+    totalItemsCount: number;
 }
 
 const initialState: TodoState = {
@@ -17,7 +18,8 @@ const initialState: TodoState = {
     todos: [],
     currentPage: 1,
     pageSize: 10,
-    totalPages: 0
+    totalPages: 0,
+    totalItemsCount: 0
 };
 
 const apiUrl = "http://localhost:5"
@@ -82,7 +84,10 @@ const todoSlice = createSlice({
 
         }).addCase(addTodo.fulfilled, (state: TodoState, action) => {
             state.loading = false;
-            state.todos.push(action.payload);
+            if(state.todos.length < state.pageSize){
+                state.todos.push(action.payload);
+            }
+            state.totalItemsCount += 1;
         }).addCase(addTodo.rejected, (state: TodoState, action) => {
             state.loading = false;
             state.error = action.payload ?? "Unknown error"
@@ -107,6 +112,7 @@ const todoSlice = createSlice({
             state.currentPage = action.payload.pageNumber;
             state.totalPages = action.payload.totalPages;
             state.pageSize = action.payload.itemsPerPage;
+            state.totalItemsCount = action.payload.totalItemsCount;
         });
     }
 });

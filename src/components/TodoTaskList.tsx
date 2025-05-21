@@ -1,5 +1,6 @@
 import {TodoTaskStatus} from "../models/todo-task-status.ts";
-import {Button, DatePicker, Form, Input, Modal, Select} from "antd";
+import {Button, DatePicker, Form, Input, Modal, Pagination, Select} from "antd";
+import type { PaginationProps } from 'antd';
 import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
 import React, {useEffect, useState} from "react";
 import type {TodoTask} from "../models/todo-task.ts";
@@ -14,7 +15,7 @@ function TodoTaskList() {
     const pageSize = 10;
     const [currentPage, setCurrentPage] = useState(1);
     const dispatch = useDispatch<AppDispatch>();
-    const { todos, loading, error } = useSelector((state: RootState) => state.todos);
+    const { todos, loading, error, totalPages, totalItemsCount } = useSelector((state: RootState) => state.todos);
     const [isUpdateTodoTaskModalOpen, setIsUpdateTodoTaskModalOpen] = useState(false);
     const [isDeleteTodoTaskModalOpen, setIsDeleteTodoTaskModalOpen] = useState(false);
     const [todoTaskToUpdate, setTodoTaskToUpdate] = useState<TodoTask | null>(null);
@@ -26,6 +27,10 @@ function TodoTaskList() {
     useEffect(() => {
         dispatch(getTodos({pageNumber: currentPage, pageSize: pageSize}));
     }, [dispatch, currentPage]);
+
+    const onPageChange: PaginationProps["onChange"] = (page) => {
+        setCurrentPage(page);
+    };
 
     const onFinishUpdateTodoTask: FormProps<TodoTask>['onFinish'] = (values) => {
         console.log(values)
@@ -77,6 +82,7 @@ function TodoTaskList() {
     const handleDeleteTodoTaskOk = () => {
         if (todoTaskIdToDelete) {
             dispatch(deleteTodo(todoTaskIdToDelete))
+            dispatch(getTodos({pageNumber: currentPage, pageSize: pageSize}))
             setTodoTaskToDelete(null);
             setTodoTaskIdToDelete(null);
         }
@@ -113,6 +119,11 @@ function TodoTaskList() {
                         </div>
                     </div>
                 ))}
+                {loading
+                    ? (<></>)
+                    : (todos.length > 0
+                        ? <Pagination current={currentPage} onChange={onPageChange} total={totalItemsCount}></Pagination>
+                        : <p>You don't have any todo tasks yet</p>)}
             </div>
         </div>
         <Modal
