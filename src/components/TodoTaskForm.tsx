@@ -47,7 +47,7 @@ function TodoTaskForm() {
                     label={'Name'}
                     rules={[{required: true, message: "Please give the name for your task"}]}
                 >
-                    <Input placeholder={'Enter todo task name'} name='name'></Input>
+                    <Input maxLength={50} placeholder={'Enter todo task name'} name='name'></Input>
                 </Form.Item>
             </div>
             <div className='form-group'>
@@ -55,7 +55,7 @@ function TodoTaskForm() {
                     name='description'
                     label={'Description'}
                 >
-                    <TextArea placeholder={'Put the description of your task here'}
+                    <TextArea maxLength={100} placeholder={'Put the description of your task here'}
                               autoSize={{minRows: 2, maxRows: 4}} name='description'/>
                 </Form.Item>
             </div>
