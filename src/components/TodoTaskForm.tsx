@@ -1,74 +1,93 @@
-import {Button, DatePicker, Form, Input} from "antd";
-import dayjs from "dayjs";
-import React, {useState} from "react";
-import TextArea from "antd/es/input/TextArea";
-import type {TodoTask} from "../models/todo-task.ts";
-import {FormProps} from "antd/lib";
-import {TodoTaskStatus} from "../models/todo-task-status.ts";
-import type {AppDispatch, RootState} from "../store/store.ts";
-import {useDispatch, useSelector} from "react-redux";
-import {addTodo} from "../store/todoSlice.ts";
+import React, { useState } from "react";
+import type { TodoTask } from "../models/todo-task.ts";
+import { TodoTaskStatus } from "../models/todo-task-status.ts";
+import type { AppDispatch, RootState } from "../store/store.ts";
+import { useDispatch, useSelector } from "react-redux";
+import { addTodo } from "../store/todoSlice.ts";
+import dayjs from 'dayjs';
+import relativeTime from "dayjs/plugin/relativeTime";
 
-let idRunner = 1;
+dayjs.extend(relativeTime);
 
 function TodoTaskForm() {
     const dispatch = useDispatch<AppDispatch>();
-    const { todos, loading, error } = useSelector((state: RootState) => state.todos);
-    const [createTodoTaskForm] = Form.useForm<TodoTask>();
+    const [formError, setFormError] = useState<string>('');
+    const { todos, loading, error } = useSelector((state: RootState) => state.todos || {});
+    const [formData, setFormData] = useState({
+        name: '',
+        description: '',
+        dueDate: '',
+    });
     const today = dayjs(new Date()).format('YYYY-MM-DD');
 
-    const onFinishCreateTodoTask: FormProps<TodoTask>['onFinish'] = (values) => {
-        const date = dayjs(values.dueDate).format('YYYY-MM-DD');
-        const todoTask: TodoTask = {
-            ...values,
-            dueDate: date,
-            status: TodoTaskStatus.ToDo
-        };
-        dispatch(addTodo(todoTask));
-        createTodoTaskForm.resetFields();
+    const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        let newValue = value;
+        if (name === 'name') {
+            newValue = value.slice(0, 50);
+        } else if (name === 'description') {
+            newValue = value.slice(0, 100);
+        }
+        setFormData((prev) => ({ ...prev, [name]: newValue }));
     };
 
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        const todoTask: TodoTask = {
+            ...formData,
+            dueDate: dayjs(formData.dueDate).format('YYYY-MM-DD'),
+            status: TodoTaskStatus.ToDo,
+        };
+        dispatch(addTodo(todoTask));
+        setFormData({ name: '', description: '', dueDate: '' });
+    };
 
-    return (<div className='todo-wrapper'>
-        <Form
-            form={createTodoTaskForm}
-            className='todo-form'
-            onFinish={onFinishCreateTodoTask}
-            initialValues={{name: '', description: '', dueDate: ''}}
-            layout={"vertical"}
-        >
-            <div className='form-group'>
-                <Form.Item<TodoTask>
-                    name='name'
-                    label={'Name'}
-                    rules={[{required: true, message: "Please give the name for your task"}]}
-                >
-                    <Input maxLength={50} placeholder={'Enter todo task name'} name='name'></Input>
-                </Form.Item>
-            </div>
-            <div className='form-group'>
-                <Form.Item<TodoTask>
-                    name='description'
-                    label={'Description'}
-                >
-                    <TextArea maxLength={100} placeholder={'Put the description of your task here'}
-                              autoSize={{minRows: 2, maxRows: 4}} name='description'/>
-                </Form.Item>
-            </div>
-            <div className='form-group'>
-                <Form.Item<TodoTask>
-                    label={'Due Date'}
-                    name='dueDate'
-                    rules={[{required: true, message: "Due Date is required"}]}
-                >
-                    <DatePicker name='dueDate' minDate={dayjs(today)}/>
-                </Form.Item>
-            </div>
-
-            <Button className='create-task-btn' type={'primary'} htmlType={'submit'}>Create task</Button>
-        </Form>
-    </div>);
+    return (
+        <div className="todo-wrapper">
+            <form className="todo-form" onSubmit={handleSubmit} role="form">
+                <div className="form-group">
+                    <label htmlFor="name">Name</label>
+                    <input
+                        id="name"
+                        name="name"
+                        maxLength={50}
+                        placeholder="Enter todo task name"
+                        value={formData.name}
+                        onChange={handleFormChange}
+                        required
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="description">Description</label>
+                    <textarea
+                        resize
+                        id="description"
+                        name="description"
+                        maxLength={100}
+                        placeholder="Put the description of your task here"
+                        value={formData.description}
+                        onChange={handleFormChange}
+                        rows={2}
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="dueDate">Due Date</label>
+                    <input
+                        id="dueDate"
+                        name="dueDate"
+                        type="date"
+                        value={formData.dueDate}
+                        min={today}
+                        onChange={handleFormChange}
+                        required
+                    />
+                </div>
+                <button className="create-task-btn" type="submit">
+                    Create task
+                </button>
+            </form>
+        </div>
+    );
 }
-
 
 export default TodoTaskForm;
