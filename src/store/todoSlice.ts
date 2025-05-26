@@ -30,8 +30,7 @@ export const addTodo = createAsyncThunk<TodoTask, TodoTask, { rejectValue: strin
 
         return await context.with(trace.setSpan(context.active(), span), async () => {
             const headers: Record<string, string> = {};
-            propagation.inject(context.active(), headers); // inject W3C trace headers
-
+            propagation.inject(context.active(), headers);
             try {
                 const response = await axios.post("http://localhost:8090/api/todos/", todoTask, { headers });
                 span.setAttribute('http.status_code', response.status);
@@ -55,7 +54,7 @@ export const updateTodo = createAsyncThunk<TodoTask, TodoTask, { rejectValue: st
 
         return await context.with(trace.setSpan(context.active(), span), async () => {
             const headers: Record<string, string> = {};
-            propagation.inject(context.active(), headers); // inject W3C trace headers
+            propagation.inject(context.active(), headers);
 
             try {
                 const response = await axios.put(`http://localhost:8090/api/todos/${todoTask.id}`, todoTask, { headers });
@@ -80,7 +79,7 @@ export const deleteTodo = createAsyncThunk<number, void, { rejectValue: string }
 
         return await context.with(trace.setSpan(context.active(), span), async () => {
             const headers: Record<string, string> = {};
-            propagation.inject(context.active(), headers); // inject W3C trace headers
+            propagation.inject(context.active(), headers);
 
             try {
                 const response = await axios.delete(`http://localhost:8090/api/todos/${todoTaskId}`, { headers });
@@ -105,7 +104,7 @@ export const getTodos = createAsyncThunk<{ pageNumber: number, pageSize: number 
 
         return await context.with(trace.setSpan(context.active(), span), async () => {
             const headers: Record<string, string> = {};
-            propagation.inject(context.active(), headers); // inject W3C trace headers
+            propagation.inject(context.active(), headers);
 
             try {
                 const response = await axios.get(
