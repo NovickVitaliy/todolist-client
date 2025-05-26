@@ -38,7 +38,6 @@ jest.mock('../src/store/todoSlice', () => ({
     addTodo: jest.fn((payload) => ({type: 'todos/addTodo', payload})),
 }));
 
-// Simple thunk middleware for testing
 const middlewares = [thunk];
 const mockStore = configureStore(middlewares);
 
@@ -86,7 +85,7 @@ describe('TodoTaskForm', () => {
             target: {value: 'New Description'},
         });
         fireEvent.change(screen.getByLabelText('Due Date'), {
-            target: {value: '2025-05-25'},
+            target: {value: '2050-05-25'},
         });
         fireEvent.click(screen.getByRole('button', {name: /Create task/i}));
 
@@ -95,13 +94,12 @@ describe('TodoTaskForm', () => {
                 addTodo({
                     name: 'New Task',
                     description: 'New Description',
-                    dueDate: '2025-05-25',
+                    dueDate: '2050-05-25',
                     status: TodoTaskStatus.ToDo,
                 })
             );
         });
 
-        // Verify form reset
         expect(screen.getByLabelText('Name')).toHaveValue('');
         expect(screen.getByLabelText('Description')).toHaveValue('');
         expect(screen.getByLabelText('Due Date')).toHaveValue('');
@@ -114,14 +112,12 @@ describe('TodoTaskForm', () => {
             </Provider>
         );
 
-        // Submit without filling required fields
         fireEvent.click(screen.getByRole('button', {name: /Create task/i}));
 
         await waitFor(() => {
             expect(store.dispatch).not.toHaveBeenCalledWith(addTodo(expect.anything()));
         });
 
-        // Fill only name, not dueDate
         fireEvent.change(screen.getByLabelText('Name'), {
             target: {value: 'New Task'},
         });
@@ -131,7 +127,6 @@ describe('TodoTaskForm', () => {
             expect(store.dispatch).not.toHaveBeenCalledWith(addTodo(expect.anything()));
         });
 
-        // Fill only dueDate, not name
         fireEvent.change(screen.getByLabelText('Name'), {
             target: {value: ''},
         });
@@ -183,7 +178,6 @@ describe('TodoTaskForm', () => {
             target: {value: pastDate},
         });
 
-        // Browser may not enforce min date, so check component behavior
         fireEvent.click(screen.getByRole('button', {name: /Create task/i}));
 
         expect(store.dispatch).not.toHaveBeenCalledWith(addTodo(expect.anything()));

@@ -22,11 +22,10 @@ const initialState: TodoState = {
     totalItemsCount: 0
 };
 
-const apiUrl = "http://localhost:5"
 const tracer = trace.getTracer('react-client');
 export const addTodo = createAsyncThunk<TodoTask, TodoTask, { rejectValue: string }>(
     'todos/add',
-    async (todoTask, {rejectWithValue}) => {
+    async (todoTask: TodoTask, {rejectWithValue}) => {
         const span = tracer.startSpan('createTodo');
 
         return await context.with(trace.setSpan(context.active(), span), async () => {

@@ -58,6 +58,8 @@
     outline: none;
     border: 1px solid black;
     resize: none;
+    font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+    font-size: 16px;
 }
 
 select {

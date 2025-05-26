@@ -11,8 +11,6 @@ dayjs.extend(relativeTime);
 
 function TodoTaskForm() {
     const dispatch = useDispatch<AppDispatch>();
-    const [formError, setFormError] = useState<string>('');
-    const { todos, loading, error } = useSelector((state: RootState) => state.todos || {});
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -60,7 +58,6 @@ function TodoTaskForm() {
                 <div className="form-group">
                     <label htmlFor="description">Description</label>
                     <textarea
-                        resize
                         id="description"
                         name="description"
                         maxLength={100}

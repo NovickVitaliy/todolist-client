@@ -65,7 +65,6 @@ function TodoTaskList() {
 
     const handleUpdateTodoTaskOk = () => {
         if (!todoTaskToUpdate) return;
-        // Validate required fields
         if (!formData.name || !formData.dueDate) {
             alert('Name and Due Date are required');
             return;
@@ -185,6 +184,7 @@ function TodoTaskList() {
                         <div className="form-group">
                             <label htmlFor="name">Name</label>
                             <input
+                                maxLength={50}
                                 id="name"
                                 name="name"
                                 placeholder="Enter todo task name"
@@ -196,6 +196,7 @@ function TodoTaskList() {
                         <div className="form-group">
                             <label htmlFor="description">Description</label>
                             <textarea
+                                maxLength={100}
                                 id="description"
                                 name="description"
                                 placeholder="Put the description of your task here"
